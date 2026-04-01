@@ -1,0 +1,218 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>A Special Moment</title>
+    <link href="https://fonts.googleapis.com/css2?family=Dancing+Script:wght@700&family=Montserrat:wght@300;400;600&display=swap" rel="stylesheet">
+    <style>
+        body, html {
+            margin: 0; padding: 0;
+            height: 100vh; width: 100vw;
+            overflow: hidden;
+            font-family: 'Montserrat', sans-serif;
+            color: white;
+            background-color: #000;
+        }
+
+        /* 1. ENTRY SCREEN */
+        #entry-screen {
+            position: fixed;
+            top: 0; left: 0; width: 100%; height: 100%;
+            background: #000;
+            z-index: 5000;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            cursor: pointer;
+            text-align: center;
+        }
+
+        #entry-screen h2 {
+            font-family: 'Dancing Script', cursive;
+            font-size: 3rem;
+            color: white;
+            animation: pulse 2s infinite;
+        }
+
+        @keyframes pulse {
+            0% { opacity: 0.5; }
+            50% { opacity: 1; }
+            100% { opacity: 0.5; }
+        }
+
+        /* 2. MAIN CONTENT & BACKGROUND FIX */
+        #main-content {
+            display: none;
+            height: 100vh;
+            width: 100vw;
+            position: relative;
+            /* Direct background assignment to ensure it loads */
+            background: url('background.jpg') no-repeat center center;
+            background-size: cover;
+        }
+
+        /* Dark overlay to make text readable over the image */
+        #main-content::before {
+            content: "";
+            position: absolute;
+            top: 0; left: 0; width: 100%; height: 100%;
+            background: rgba(0, 0, 0, 0.3);
+            z-index: 0;
+        }
+
+        #typewriter-section {
+            position: absolute;
+            top: 10%; width: 80%; left: 10%;
+            text-align: center; font-size: 2.4rem;
+            line-height: 1.6; min-height: 120px;
+            text-shadow: 2px 2px 10px rgba(0,0,0,1);
+            z-index: 10;
+        }
+
+        .overlay {
+            height: 100vh;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            position: relative;
+            z-index: 10;
+        }
+
+        h1 {
+            font-family: 'Dancing Script', cursive;
+            font-size: 5.5rem;
+            text-shadow: 2px 4px 20px rgba(0,0,0,0.9);
+            margin-top: 150px;
+            margin-bottom: 50px;
+        }
+
+        .btn-container {
+            display: flex; gap: 30px;
+            position: relative; height: 80px;
+        }
+
+        button {
+            padding: 18px 50px; font-size: 1.4rem;
+            border: none; border-radius: 50px;
+            cursor: pointer; font-weight: 600;
+            box-shadow: 0 4px 20px rgba(0,0,0,0.6);
+        }
+
+        #yesBtn { background-color: #4CAF50; color: white; }
+        #noBtn { background-color: #f44336; color: white; position: absolute; left: 200px; }
+
+        /* 3. PRANK OVERLAY */
+        #prank-container {
+            display: none;
+            position: fixed;
+            top: 0; left: 0; width: 100%; height: 100%;
+            z-index: 10000;
+            flex-direction: column; justify-content: center; align-items: center;
+            background-size: cover;
+            background-position: center;
+        }
+
+        #prank-text {
+            font-size: 6rem; font-weight: 900;
+            color: #ffeb3b; text-shadow: 4px 4px 25px #000;
+            margin-bottom: 20px;
+        }
+
+        video { display: none; width: 90%; max-width: 800px; border-radius: 15px; }
+
+        .monkey-screen { display: none; text-align: center; color: white; }
+    </style>
+</head>
+<body>
+
+    <div id="entry-screen" onclick="startExperience()">
+        <div>
+            <h2>Click to open your surprise...</h2>
+        </div>
+    </div>
+
+    <audio id="bgMusic" loop preload="auto">
+        <source src="background_music.mp3" type="audio/mpeg">
+    </audio>
+
+    <div id="main-content">
+        <div id="typewriter-section"></div>
+        <div class="overlay">
+            <h1 id="proposalText">❤️❤️❤️ I love you, </h1>
+            <div class="btn-container">
+                <button id="yesBtn" onclick="triggerPrank()">Yes, I love you too ❤️❤️❤️</button>
+                <button id="noBtn" onmouseover="runAway()">I hate you</button>
+            </div>
+        </div>
+    </div>
+
+    <div id="prank-container">
+        <h1 id="prank-text">APRIL FOOL!</h1>
+        <video id="shockVideo"><source src="shock_video.mp4" type="video/mp4"></video>
+        <div id="monkeyFinal" class="monkey-screen">
+            <h1 style="font-size: 8rem;">🙊🤣</h1>
+            <h2>APRIL FOOL!</h2>
+            <button onclick="location.reload()" style="background: white; color: black; margin-top: 20px;">Exit</button>
+        </div>
+    </div>
+
+    <script>
+        const bgMusic = document.getElementById('bgMusic');
+        const shockVideo = document.getElementById('shockVideo');
+        const typewriterElement = document.getElementById('typewriter-section');
+        const prankContainer = document.getElementById('prank-container');
+        const prankText = document.getElementById('prank-text');
+        
+        const msg = "I fell in love with you before I knew what true love was. I remained in love with you because I've never desired anyone or anything more than you. I will always love you because I cannot imagine even a moment of my existence without you. Will you marry me?";
+        
+        function startExperience() {
+            const urlParams = new URLSearchParams(window.location.search);
+            let name = urlParams.get('name') || prompt("Enter your name:");
+            document.getElementById('proposalText').innerText += (name || "Monica")+"❤️❤️❤️";
+
+            bgMusic.play();
+            document.getElementById('entry-screen').style.display = 'none';
+            document.getElementById('main-content').style.display = 'block';
+
+            let charIndex = 0;
+            function type() {
+                if (charIndex < msg.length) {
+                    typewriterElement.innerHTML += msg.charAt(charIndex);
+                    charIndex++;
+                    setTimeout(type, 50);
+                }
+            }
+            type();
+        }
+
+        function runAway() {
+            const btn = document.getElementById('noBtn');
+            btn.style.position = 'fixed';
+            btn.style.left = Math.random() * (window.innerWidth - 150) + 'px';
+            btn.style.top = Math.random() * (window.innerHeight - 100) + 'px';
+        }
+
+        function triggerPrank() {
+            bgMusic.pause();
+            // Swaps background to Office Chaos immediately
+            prankContainer.style.backgroundImage = "url('office_chaos.jpg')";
+            prankContainer.style.display = 'flex';
+            
+            setTimeout(() => {
+                prankText.style.display = 'none';
+                prankContainer.style.backgroundImage = 'none';
+                prankContainer.style.backgroundColor = 'black';
+                shockVideo.style.display = 'block';
+                shockVideo.play();
+            }, 2500);
+
+            shockVideo.onended = () => {
+                shockVideo.style.display = 'none';
+                document.getElementById('monkeyFinal').style.display = 'block';
+            };
+        }
+    </script>
+</body>
+</html>
