@@ -170,7 +170,7 @@
         function startExperience() {
             const urlParams = new URLSearchParams(window.location.search);
             let name = urlParams.get('name') || prompt("Enter your name:");
-            document.getElementById('proposalText').innerText += (name || "")+"❤️❤️❤️";
+            document.getElementById('proposalText').innerText += (name || " ")+"❤️❤️❤️";
 
             bgMusic.play();
             document.getElementById('entry-screen').style.display = 'none';
